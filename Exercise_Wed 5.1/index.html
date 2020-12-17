@@ -2,13 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Horizontal Stacked Bar Chart</title>
+    <title>Line Plot</title>
     <script src="../libs/d3/d3.min.js"></script>
+
+    <style>
+
+        h3{
+            font-family: Arial,serif;
+            font-size: 20px;
+            margin: 2%;
+
+        }
+
+
+    </style>
 
 </head>
 <body>
-<div style="width: 80%"></div>
+
+<h3>
+    Line Plot
+</h3>
+
+<div id="container" style="width: 60%"></div>
 <script>
+
+    let svg = d3.select("#container")
+        .append('svg')
+        .attr("width", "100%")
+        .attr("viewBox", "0 0 500 400")
+        .style('background-color','#ffffff');
+    let margins = 20;
+    let width = 500 - 2 * margins;
+    let height = 400 - 2 * margins;
+
+    const loadData = d3.csv("data_sample.csv",
+        function(d) {
+            return {
+                date: new Date(d.date),
+                EstimatedCost: Number(d.EstimatedCost),
+                RawMaterial: Number(d.RawMaterial),
+                Workmanship: Number(d.Workmanship),
+                YearlyStorage: Number(d.YearlyStorage)
+            }
+        })
+
+    loadData.then(data => {
+
+        console.log(data);
+
+        let x = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { return d.date; }))
+            .range([margins, width]);
+        let y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return d.EstimatedCost; })])
+            .range([height, margins]);
+
+        let line1 = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.EstimatedCost); });
+        svg.append("path")
+            .data([data])
+            .attr("class", "line")
+            .attr("d", line1)
+            .attr("fill",'none')
+            .style("stroke", "#DAB6C4")
+            .style("stroke-width","2px")
+/*-----------------------------------------------------------------*/
+        let line2 = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.RawMaterial); });
+        svg.append("path")
+            .data([data])
+            .attr("class", "line")
+            .attr("d", line2)
+            .attr("fill",'none')
+            .style("stroke","#7b886f")
+            .style("stroke-width","2px")
+/*----------------------------------------------------------------*/
+        let line3 = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.Workmanship); });
+        svg.append("path")
+            .data([data])
+            .attr("class", "line")
+            .attr("d", line3)
+            .attr("fill",'none')
+            .style("stroke","#b4dc7f")
+            .style("stroke-width","2px")
+/*----------------------------------------------------------------*/
+        let line4 = d3.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.YearlyStorage); });
+        svg.append("path")
+            .data([data])
+            .attr("class", "line")
+            .attr("d", line4)
+            .attr("fill",'none')
+            .style("stroke","#ca1551")
+            .style("stroke-width","2px")
+
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+    });
+
+
+
+
+
 
 </script>
 </body>

@@ -36,15 +36,9 @@
     let yScale = d3.scaleLinear().domain([0, 600]).range([200, 0]);
     // Step 3 area function
     let area = d3.area()
-        .x(function(d, i) {
-            return i * 100;
-        })
-        .y0(function(d) {
-            return yScale(d[0]);
-        })
-        .y1(function(d) {
-            return yScale(d[1]);
-        });
+        .x(function(d, i) { return i * 100; })
+        .y0(function(d) { return yScale(d[0]); })
+        .y1(function(d) { return yScale(d[1]); });
     // step 4
     let svg = d3.select('svg#main')
 
