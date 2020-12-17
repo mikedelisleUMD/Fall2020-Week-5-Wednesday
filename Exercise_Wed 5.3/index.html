@@ -3,11 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Area Chart</title>
-    <script src="../libs/d3/d3.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+
 </head>
 <body>
+<div id="caption" class="text-center">
+    <h2> Area Chart </h2>
+</div>
+
 <div style="width: 80%"></div>
+<svg id="main" width="60%" viewBox="0 0 1000 800"> </svg>
+
+
 <script>
+
+
+/*    let margins = 20;
+    let width = 500 - 2 * margins;
+    let height = 400 - 2 * margins;  */
+
+    d3.csv("data_sample.csv").then(function(data) {
+        console.log(data);
+
+/*        let x = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { return d.date; }))
+            .range([margins, width]); */
+
+        stackcolors = ['#44AF69',
+            '#F8333C',
+            '#FCAB10',
+            '#2B9EB3']
+        let stack = d3.stack()
+            .keys(['EstimatedCost', 'RawMaterial', 'Workmanship','YearlyStorage']);
+        let stackedSeries = stack(data);
+
+        let yScale = d3.scaleLinear()
+            .domain([0, 4000])
+            .range([1000, 0]);
+
+        // Step 3 area function
+        let area = d3.area()
+            .x(function(d, i) { return i * 100; })
+            .y0(function(d) { return yScale(d[0]); })
+            .y1(function(d) { return yScale(d[1]); });
+
+        console.log(area);
+
+        let svg = d3.select('svg#main')
+
+        svg.selectAll('path')
+            .data(stackedSeries)
+            .enter()
+            .append('path')
+            .style('fill', function(d, i) {
+                return stackcolors[i];
+            })
+            .attr('d', area)
+
+ /*       svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x)) */
+
+
+
+    });
+
+
 
 </script>
 </body>
